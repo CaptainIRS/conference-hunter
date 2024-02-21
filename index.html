@@ -145,7 +145,7 @@
                     },
                     series: [seriesData],
                     chart: {
-                        width: 1500,
+                        width: Math.max(1000, window.innerWidth),
                         scrollablePlotArea: {
                             minHeight: plots * 20 + 150,
                         }
