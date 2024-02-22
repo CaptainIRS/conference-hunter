@@ -150,15 +150,6 @@
                         data[i].title,
                         data[i].acronym,
                     ];
-                    // seriesData.data.push({
-                    //     'acronym': data[i].acronym,
-                    //     'name': data[i].title,
-                    //     'id': data[i].acronym,
-                    //     color: 'rgba(0, 0, 0, 0.7)',
-                    //     pointWidth: 5,
-                    // });
-                    // j++;
-                    // plots += 1;
                     let addedPlots = 0;
                     let hasSeries = false;
                     let minDate = null, maxDate = null;
@@ -177,7 +168,7 @@
                             }
                             stdDevMin = Date.UTC(avg.year, avg.month, avg.day) - 2 * std * 24 * 60 * 60 * 1000;
                             stdDevMax = Date.UTC(avg.year, avg.month, avg.day) + 2 * std * 24 * 60 * 60 * 1000;
-                            
+
                             if (minDate == null || minDate > stdDevMin) {
                                 minDate = stdDevMin;
                             }
@@ -242,23 +233,22 @@
                     }
 
                     plots += addedPlots;
-                    
+
                     for (let k = 0; k < deadlines.length; k++) {
                         categories.push({
-                                deadline: deadlines[k],
-                            });
+                            deadline: deadlines[k],
+                        });
                         if (k == 0)
                             categories[categories.length - 1].title = content[k];
                         if (k == 1)
                             categories[categories.length - 1].acronym = content[k];
                     }
-                    
+
                 }
                 console.log(categories);
 
                 const chart = Highcharts.ganttChart('container', {
                     yAxis: {
-                        // uniqueNames: true,
                         staticScale: 20,
                         grid: {
                             columns: [{
@@ -267,7 +257,7 @@
                                 },
                                 overflow: 'allow',
                                 labels: {
-                                    formatter: function() { 
+                                    formatter: function () {
                                         if (this.value.acronym) {
                                             return this.value.acronym;
                                         } else if (this.value.title) {
@@ -280,7 +270,7 @@
                                     text: 'Deadline'
                                 },
                                 labels: {
-                                    formatter: function() { 
+                                    formatter: function () {
                                         if (this.value.deadline == 'Overall') {
                                             return `<b>${this.value.deadline}</b>`;
                                         }
@@ -326,11 +316,10 @@
                     chart: {
                         width: Math.max(1200, window.innerWidth),
                         scrollablePlotArea: {
-                            minHeight: plots * 20 + 100,
+                            minHeight: plots * 20 + 150,
                         }
                     }
                 });
-                console.log(chart);
             });
         }
 
