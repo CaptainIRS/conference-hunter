@@ -37,6 +37,15 @@
         #container .highcharts-treegrid-node-expanded {
             pointer-events: none;
         }
+
+        .highcharts-scrolling-parent {
+            overflow-y: hidden !important;
+        }
+
+        .highcharts-scrollable-mask {
+            fill-opacity: 1 !important;
+            fill: #FFFFF0 !important;
+        }
     </style>
 </head>
 
@@ -51,6 +60,7 @@
     <div id="container"></div>
     <footer>Made with ❤️ by <a href="https://github.com/CaptainIRS">CaptainIRS</a></footer>
     <script>
+        let j = 0;
         const appendToSeries = (seriesData, avg, std_dev, min, max, name, parent) => {
             let color = '';
             if (name.includes('Abstract')) {
@@ -66,52 +76,60 @@
             } else if (name.includes('End')) {
                 color = 'rgba(255, 0, 0, 0.7)';
             }
-            let plots = 0;
             if (avg) {
                 if (std_dev != -1) {
                     seriesData.data.push({
+                        'deadline': name,
                         'name': name,
                         'start': Date.UTC(avg.year, avg.month, avg.day) - 2 * std_dev * 24 * 60 * 60 * 1000,
                         'end': Date.UTC(avg.year, avg.month, avg.day) + 2 * std_dev * 24 * 60 * 60 * 1000,
                         color: 'rgba(140, 140, 140, 0.7)',
                         pointWidth: 2,
                         'parent': parent,
-                        id: `${parent}children`
+                        id: `${parent}children`,
+                        y: j
                     })
                     seriesData.data.push({
+                        'deadline': name,
                         'name': name,
                         'start': Date.UTC(min.year, min.month, min.day),
                         'end': Date.UTC(max.year, max.month, max.day),
                         'parent': parent,
                         color: color,
-                        id: `${parent}children`
+                        id: `${parent}children`,
+                        y: j
                     })
-                    plots += 1;
+                    return true;
                 } else if (std_dev) {
                     seriesData.data.push({
+                        'deadline': name,
                         'name': name,
                         'start': Date.UTC(avg.year, avg.month, avg.day) - 2 * 30 * 24 * 60 * 60 * 1000,
                         'end': Date.UTC(avg.year, avg.month, avg.day) + 2 * 30 * 24 * 60 * 60 * 1000,
                         color: 'rgba(140, 140, 140, 0.7)',
                         pointWidth: 2,
                         'parent': parent,
-                        id: `${parent}children`
+                        id: `${parent}children`,
+                        y: j
                     })
                     seriesData.data.push({
+                        'deadline': name,
                         'name': name,
                         'start': Date.UTC(min.year, min.month, min.day) - 30 * 24 * 60 * 60 * 1000,
                         'end': Date.UTC(max.year, max.month, max.day) + 30 * 24 * 60 * 60 * 1000,
                         color: color,
                         'parent': parent,
-                        id: `${parent}children`
+                        id: `${parent}children`,
+                        y: j
                     })
-                    plots += 1;
+                    return true;
                 }
             }
-            return plots;
+            return false;
         }
 
         const openTab = (confType) => {
+            j = 0;
             document.querySelector('.is-active').classList.remove('is-active');
             document.getElementById(`${confType}-tab`).classList.add('is-active');
             fetch('/details.json').then(response => response.json()).then(data => {
@@ -122,42 +140,183 @@
                 }
                 plots = 0;
                 const type = confType == 'a-star' ? 'A*' : confType.toUpperCase();
+                let categories = [];
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].rank != type) {
                         continue;
                     }
+                    let deadlines = [];
+                    let content = [
+                        data[i].title,
+                        data[i].acronym,
+                    ];
+                    // seriesData.data.push({
+                    //     'acronym': data[i].acronym,
+                    //     'name': data[i].title,
+                    //     'id': data[i].acronym,
+                    //     color: 'rgba(0, 0, 0, 0.7)',
+                    //     pointWidth: 5,
+                    // });
+                    // j++;
+                    // plots += 1;
+                    let addedPlots = 0;
+                    let hasSeries = false;
+                    let minDate = null, maxDate = null;
+                    for (let [avg, std] of [
+                        [data[i].abstract_registration_dues_avg, data[i].abstract_registration_dues_std_dev],
+                        [data[i].submission_deadlines_avg, data[i].submission_deadlines_std_dev],
+                        [data[i].notification_dues_avg, data[i].notification_dues_std_dev],
+                        [data[i].final_version_dues_avg, data[i].final_version_dues_std_dev],
+                        [data[i].start_dates_avg, data[i].start_dates_std_dev],
+                        [data[i].end_dates_avg, data[i].end_dates_std_dev]
+                    ]) {
+                        if (avg) {
+                            date = Date.UTC(avg.year, avg.month, avg.day);
+                            if (std == -1) {
+                                std = 30;
+                            }
+                            stdDevMin = Date.UTC(avg.year, avg.month, avg.day) - 2 * std * 24 * 60 * 60 * 1000;
+                            stdDevMax = Date.UTC(avg.year, avg.month, avg.day) + 2 * std * 24 * 60 * 60 * 1000;
+                            
+                            if (minDate == null || minDate > stdDevMin) {
+                                minDate = stdDevMin;
+                            }
+                            if (maxDate == null || maxDate < stdDevMax) {
+                                maxDate = stdDevMax;
+                            }
+                        }
+                    }
                     seriesData.data.push({
-                        'name': `${data[i].acronym} (${data[i].title})`,
-                        'id': data[i].acronym,
+                        'acronym': data[i].acronym,
+                        'name': data[i].title,
+                        'id': `${data[i].acronym}main`,
                         color: 'rgba(0, 0, 0, 0.7)',
+                        start: minDate,
+                        end: maxDate,
                         pointWidth: 5,
+                        y: j++,
                     });
-                    plots += 1;
+                    addedPlots += 1;
+                    deadlines.push('Overall');
                     // abstract_registration_dues_avg
-                    plots += appendToSeries(seriesData, data[i].abstract_registration_dues_avg, data[i].abstract_registration_dues_std_dev, data[i].abstract_registration_dues_min, data[i].abstract_registration_dues_max, 'Abstract Registration Due', data[i].acronym)
+                    hasSeries = appendToSeries(seriesData, data[i].abstract_registration_dues_avg, data[i].abstract_registration_dues_std_dev, data[i].abstract_registration_dues_min, data[i].abstract_registration_dues_max, 'Abstract Registration Due', data[i].acronym)
+                    if (hasSeries) {
+                        addedPlots += 1;
+                        deadlines.push('Abstract Registration');
+                        j++;
+                    }
                     // submission_deadlines_avg
-                    plots += appendToSeries(seriesData, data[i].submission_deadlines_avg, data[i].submission_deadlines_std_dev, data[i].submission_deadlines_min, data[i].submission_deadlines_max, 'Submission Deadline', data[i].acronym)
+                    hasSeries = appendToSeries(seriesData, data[i].submission_deadlines_avg, data[i].submission_deadlines_std_dev, data[i].submission_deadlines_min, data[i].submission_deadlines_max, 'Submission Deadline', data[i].acronym)
+                    if (hasSeries) {
+                        addedPlots += 1;
+                        deadlines.push('Submission');
+                        j++;
+                    }
                     // notification_dues_avg
-                    plots += appendToSeries(seriesData, data[i].notification_dues_avg, data[i].notification_dues_std_dev, data[i].notification_dues_min, data[i].notification_dues_max, 'Notification Due', data[i].acronym)
+                    hasSeries = appendToSeries(seriesData, data[i].notification_dues_avg, data[i].notification_dues_std_dev, data[i].notification_dues_min, data[i].notification_dues_max, 'Notification Due', data[i].acronym)
+                    if (hasSeries) {
+                        addedPlots += 1;
+                        deadlines.push('Notification');
+                        j++;
+                    }
                     // final_version_dues_avg
-                    plots += appendToSeries(seriesData, data[i].final_version_dues_avg, data[i].final_version_dues_std_dev, data[i].final_version_dues_min, data[i].final_version_dues_max, 'Final Version Due', data[i].acronym)
+                    hasSeries = appendToSeries(seriesData, data[i].final_version_dues_avg, data[i].final_version_dues_std_dev, data[i].final_version_dues_min, data[i].final_version_dues_max, 'Final Version Due', data[i].acronym)
+                    if (hasSeries) {
+                        addedPlots += 1;
+                        deadlines.push('Final Version');
+                        j++;
+                    }
                     // start_dates_avg
-                    plots += appendToSeries(seriesData, data[i].start_dates_avg, data[i].start_dates_std_dev, data[i].start_dates_min, data[i].start_dates_max, 'Start Date', data[i].acronym)
+                    hasSeries = appendToSeries(seriesData, data[i].start_dates_avg, data[i].start_dates_std_dev, data[i].start_dates_min, data[i].start_dates_max, 'Start Date', data[i].acronym)
+                    if (hasSeries) {
+                        addedPlots += 1;
+                        deadlines.push('Start');
+                        j++;
+                    }
                     // end_dates_avg
-                    plots += appendToSeries(seriesData, data[i].end_dates_avg, data[i].end_dates_std_dev, data[i].end_dates_min, data[i].end_dates_max, 'End Date', data[i].acronym)
+                    hasSeries = appendToSeries(seriesData, data[i].end_dates_avg, data[i].end_dates_std_dev, data[i].end_dates_min, data[i].end_dates_max, 'End Date', data[i].acronym)
+                    if (hasSeries) {
+                        addedPlots += 1;
+                        deadlines.push('End');
+                        j++;
+                    }
+
+                    plots += addedPlots;
+                    
+                    for (let k = 0; k < deadlines.length; k++) {
+                        categories.push({
+                                deadline: deadlines[k],
+                            });
+                        if (k == 0)
+                            categories[categories.length - 1].title = content[k];
+                        if (k == 1)
+                            categories[categories.length - 1].acronym = content[k];
+                    }
+                    
                 }
+                console.log(categories);
 
                 const chart = Highcharts.ganttChart('container', {
                     yAxis: {
-                        uniqueNames: true,
+                        // uniqueNames: true,
                         staticScale: 20,
+                        grid: {
+                            columns: [{
+                                title: {
+                                    text: 'Acronym'
+                                },
+                                overflow: 'allow',
+                                labels: {
+                                    formatter: function() { 
+                                        if (this.value.acronym) {
+                                            return this.value.acronym;
+                                        } else if (this.value.title) {
+                                            return `<b><a href="https://www.google.com/search?q=${this.value.title}">${this.value.title}</a></b>`;
+                                        }
+                                    }
+                                }
+                            }, {
+                                title: {
+                                    text: 'Deadline'
+                                },
+                                labels: {
+                                    formatter: function() { 
+                                        if (this.value.deadline == 'Overall') {
+                                            return `<b>${this.value.deadline}</b>`;
+                                        }
+                                        return this.value.deadline;
+                                    }
+                                }
+                            }],
+                        },
+                        labels: {
+                            levels: [{
+                                level: 0,
+                                style: {
+                                    fontSize: '1.5em',
+                                    fontWeight: 'bold'
+                                },
+                            }, {
+                                level: 1,
+                                style: {
+                                    fontSize: '1.5em',
+                                    fontWeight: 'bold',
+                                }
+                            }, {
+                                style: {
+                                    fontSize: '1.5em',
+                                    fontWeight: 'bold'
+                                }
+                            }],
+                        },
+                        categories: categories,
                     },
                     xAxis: [{
                         grid: {
                             cellHeight: 20,
                             enabled: true,
                         }, margin: 10, maxPadding: 0
-                    },{
+                    }, {
                         grid: {
                             cellHeight: 20,
                             enabled: true,
@@ -167,10 +326,11 @@
                     chart: {
                         width: Math.max(1200, window.innerWidth),
                         scrollablePlotArea: {
-                            minHeight: plots * 20 + 150,
+                            minHeight: plots * 20 + 100,
                         }
                     }
                 });
+                console.log(chart);
             });
         }
 
