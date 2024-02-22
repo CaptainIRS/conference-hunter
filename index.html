@@ -9,6 +9,16 @@
     <script src="https://code.highcharts.com/11.3/highcharts.js"></script>
     <script src="https://code.highcharts.com/gantt/11.3/modules/gantt.js"></script>
     <style>
+        html {
+            overflow: hidden;
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            overflow: auto;
+        }
+
         .tabs {
             margin-bottom: -1.2rem !important;
             position: sticky;
@@ -29,7 +39,7 @@
         #container {
             position: absolute;
             top: 1.5rem;
-            height: calc(100vh - 3rem);
+            height: calc(100% - 3rem);
             width: 100%;
             overflow-x: scroll !important;
         }
