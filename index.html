@@ -26,7 +26,73 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
     <script src="https://code.highcharts.com/11.3/highcharts.js"></script>
     <script src="https://code.highcharts.com/gantt/11.3/modules/gantt.js"></script>
+    <link rel="stylesheet" href="https://code.highcharts.com/11.3/css/highcharts.css">
     <style>
+        :root {}
+
+        :root .highcharts-light {
+            --highcharts-color-10: #000;
+            --highcharts-color-11: rgba(148, 0, 211, 0.8);
+            --highcharts-color-12: rgba(75, 0, 130, 0.8);
+            --highcharts-color-13: rgba(0, 0, 255, 0.8);
+            --highcharts-color-14: rgba(0, 255, 0, 0.8);
+            --highcharts-color-15: rgba(255, 127, 0, 0.8);
+            --highcharts-color-16: rgba(255, 0, 0, 0.8);
+            --highcharts-color-17: rgba(0, 0, 0, 0.3);
+        }
+
+        :root .highcharts-dark {
+            --highcharts-color-10: rgb(150, 150, 150);
+            --highcharts-color-11: rgba(177, 122, 201, 0.8);
+            --highcharts-color-12: rgba(113, 94, 128, 0.8);
+            --highcharts-color-13: rgba(125, 125, 255, 0.8);
+            --highcharts-color-14: rgba(130, 255, 130, 0.8);
+            --highcharts-color-15: rgba(255, 189, 123, 0.8);
+            --highcharts-color-16: rgba(255, 126, 126, 0.8);
+            --highcharts-color-17: rgba(255, 255, 255, 0.3);
+        }
+
+        .highcharts-color-10 {
+            fill: var(--highcharts-color-10);
+            stroke: var(--highcharts-color-10);
+        }
+
+        .highcharts-color-11 {
+            fill: var(--highcharts-color-11);
+            stroke: var(--highcharts-color-11);
+        }
+
+        .highcharts-color-12 {
+            fill: var(--highcharts-color-12);
+            stroke: var(--highcharts-color-12);
+        }
+
+        .highcharts-color-13 {
+            fill: var(--highcharts-color-13);
+            stroke: var(--highcharts-color-13);
+        }
+
+        .highcharts-color-14 {
+            fill: var(--highcharts-color-14);
+            stroke: var(--highcharts-color-14);
+        }
+
+        .highcharts-color-15 {
+            fill: var(--highcharts-color-15);
+            stroke: var(--highcharts-color-15);
+        }
+
+        .highcharts-color-16 {
+            fill: var(--highcharts-color-16);
+            stroke: var(--highcharts-color-16);
+        }
+
+        .highcharts-color-17 {
+            fill: var(--highcharts-color-17);
+            stroke: var(--highcharts-color-17);
+        }
+
+
         html {
             overflow: hidden;
             height: 100%;
@@ -44,6 +110,11 @@
             font-size: 0.5rem !important;
         }
 
+        .dark .tag {
+            color: hsl(219, 70%, 96%);
+            background-color: rgb(68, 68, 68);
+        }
+
         a:hover {
             color: #485fc7 !important;
         }
@@ -52,8 +123,12 @@
             margin-bottom: -1.2rem !important;
             position: sticky;
             z-index: 1001;
-            background-color: white;
             font-size: 0.75rem !important;
+            background-color: white;
+        }
+
+        .dark .tabs {
+            background-color: rgb(68, 68, 68);
         }
 
         .tabs a {
@@ -66,16 +141,19 @@
             width: 100%;
             height: 1.25rem;
             text-align: center;
-            background-color: white;
-            border-top: 1px solid #dbdbdb;
             font-size: 0.75rem !important;
+            background-color: rgb(245, 245, 245);
+        }
+
+        .dark footer {
+            background-color: rgb(68, 68, 68);
         }
 
         #container {
             position: absolute;
             top: 1.5rem;
-            height: calc(100dvh - 3rem);
-            height: calc(100% - 3rem);
+            height: 100dvh;
+            height: 100%;
             width: 100%;
             overflow-x: scroll !important;
             transition: visibility 0.5s, opacity 0.5s linear;
@@ -99,9 +177,14 @@
             overflow-y: hidden !important;
         }
 
-        .highcharts-scrollable-mask {
+        .highcharts-light .highcharts-scrollable-mask {
             fill-opacity: 1 !important;
-            fill: #FFFFF0 !important;
+            fill: rgb(245, 245, 245) !important;
+        }
+
+        .highcharts-dark .highcharts-scrollable-mask {
+            fill-opacity: 1 !important;
+            fill: rgb(68, 68, 68) !important;
         }
 
         #loading {
@@ -118,7 +201,34 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+        }
+
+        #theme-selector {
+            padding: 0.5em 1em;
+            position: absolute;
+            right: 0;
+            cursor: pointer;
+        }
+
+        .dark .tabs a {
+            color: white;
+        }
+
+        .dark .tabs li.is-active a {
+            color: hsl(219, 89%, 78%) !important;
+            border-bottom-color: hsl(219, 89%, 78%) !important;
+        }
+
+        .dark a {
+            color: hsl(219, 70%, 96%);
+        }
+
+        .dark a:hover {
+            color: hsl(219, 70%, 96%) !important;
+        }
+
+        .dark .title {
+            color: hsl(219, 70%, 96%);
         }
     </style>
 </head>
@@ -134,6 +244,9 @@
             <li onclick="openTab('a')" id="a-tab"><a>A Rated</a></li>
             <li onclick="openTab('b')" id="b-tab"><a>B Rated</a></li>
         </ul>
+        <div id="theme-selector" role="button" onclick="toggleTheme()">
+            <span class="icon is-small"><i id="theme-selector-icon" class="fa fa-moon-o" aria-hidden="true"></i></span>
+        </div>
     </div>
     <div id="mask"><progress id="loading" class="progress is-small is-primary" max="100">0%</progress></div>
     <div id="info-container">
@@ -185,6 +298,57 @@
     <div id="container"></div>
     <footer>Made with &nbsp;❤️&nbsp; by <a href="https://github.com/CaptainIRS">CaptainIRS</a></footer>
     <script>
+        // get system theme
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+        let theme = localStorage.getItem('theme') || systemTheme;
+
+        const setLightTheme = () => {
+            document.body.classList.remove('has-background-dark');
+            document.body.classList.remove('has-text-light');
+            document.getElementById('theme-selector-icon').classList.remove('fa-sun-o');
+            document.getElementById('theme-selector-icon').classList.add('fa-moon-o');
+            document.getElementById('container').classList.remove('highcharts-dark');
+            document.getElementById('container').classList.add('highcharts-light');
+            document.body.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+
+        const setDarkTheme = () => {
+            document.body.classList.add('has-background-dark');
+            document.body.classList.add('has-text-light');
+            document.getElementById('theme-selector-icon').classList.remove('fa-moon-o');
+            document.getElementById('theme-selector-icon').classList.add('fa-sun-o');
+            document.getElementById('container').classList.remove('highcharts-light');
+            document.getElementById('container').classList.add('highcharts-dark');
+            document.body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+
+        if (theme === 'dark') {
+            setDarkTheme();
+        } else {
+            setLightTheme();
+        }
+
+        const toggleTheme = () => {
+            if (theme === 'dark') {
+                setLightTheme();
+                theme = 'light';
+            } else {
+                setDarkTheme();
+                theme = 'dark';
+            }
+        }
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (e.matches) {
+                setDarkTheme();
+            } else {
+                setLightTheme();
+            }
+        });
+
         let j = 0;
         const hideMask = () => {
             document.getElementById('mask').style.visibility = 'hidden';
@@ -203,19 +367,19 @@
             document.getElementById('info-container').style.opacity = 0;
         }
         const appendToSeries = (seriesData, avg, std_dev, min, max, name, parent) => {
-            let color = '';
+            let colorIndex = 0;
             if (name.includes('Abstract')) {
-                color = 'rgba(148, 0, 211, 0.7)';
+                colorIndex = 11;
             } else if (name.includes('Submission')) {
-                color = 'rgba(75, 0, 130, 0.7)';
+                colorIndex = 12;
             } else if (name.includes('Notification')) {
-                color = 'rgba(0, 0, 255, 0.7)';
+                colorIndex = 13;
             } else if (name.includes('Final')) {
-                color = 'rgba(0, 255, 0, 0.7)';
+                colorIndex = 14;
             } else if (name.includes('Start')) {
-                color = 'rgba(255, 127, 0, 0.7)';
+                colorIndex = 15;
             } else if (name.includes('End')) {
-                color = 'rgba(255, 0, 0, 0.7)';
+                colorIndex = 16;
             }
             if (avg) {
                 if (std_dev != -1) {
@@ -224,7 +388,7 @@
                         'name': name,
                         'start': Date.UTC(avg.year, avg.month, avg.day) - 2 * std_dev * 24 * 60 * 60 * 1000,
                         'end': Date.UTC(avg.year, avg.month, avg.day) + 2 * std_dev * 24 * 60 * 60 * 1000,
-                        color: 'rgba(140, 140, 140, 0.7)',
+                        colorIndex: 17,
                         pointWidth: 2,
                         'parent': parent,
                         id: `${parent}children`,
@@ -236,7 +400,7 @@
                         'start': Date.UTC(min.year, min.month, min.day),
                         'end': Date.UTC(max.year, max.month, max.day),
                         'parent': parent,
-                        color: color,
+                        colorIndex: colorIndex,
                         id: `${parent}children`,
                         y: j
                     })
@@ -247,7 +411,7 @@
                         'name': name,
                         'start': Date.UTC(avg.year, avg.month, avg.day) - 2 * 30 * 24 * 60 * 60 * 1000,
                         'end': Date.UTC(avg.year, avg.month, avg.day) + 2 * 30 * 24 * 60 * 60 * 1000,
-                        color: 'rgba(140, 140, 140, 0.7)',
+                        colorIndex: 17,
                         pointWidth: 2,
                         'parent': parent,
                         id: `${parent}children`,
@@ -258,7 +422,7 @@
                         'name': name,
                         'start': Date.UTC(min.year, min.month, min.day) - 30 * 24 * 60 * 60 * 1000,
                         'end': Date.UTC(max.year, max.month, max.day) + 30 * 24 * 60 * 60 * 1000,
-                        color: color,
+                        colorIndex: colorIndex,
                         'parent': parent,
                         id: `${parent}children`,
                         y: j
@@ -333,7 +497,7 @@
                         'acronym': data[i].acronym,
                         'name': data[i].title,
                         'id': `${data[i].acronym}main`,
-                        color: 'rgba(0, 0, 0, 0.7)',
+                        colorIndex: 10,
                         start: minDate,
                         end: maxDate,
                         pointWidth: 5,
@@ -414,7 +578,7 @@
 
                 const chart = Highcharts.ganttChart('container', {
                     yAxis: {
-                        staticScale: 20,
+                        staticScale: 20, maxPadding: 0, minPadding: 0,
                         grid: {
                             columns: [{
                                 overflow: 'allow',
@@ -450,15 +614,19 @@
                         grid: {
                             cellHeight: 20,
                             enabled: true,
-                        }, margin: 10, maxPadding: 0
+                        }, margin: 0, minPadding: 0, maxPadding: 0
                     }, {
                         grid: {
                             cellHeight: 20,
                             enabled: true,
-                        }, margin: -15, maxPadding: 0
+                        }, margin: -15, minPadding: 0, maxPadding: 0
                     }],
                     series: [seriesData],
                     chart: {
+                        spacingTop: 0,
+                        spacingRight: 0,
+                        spacingBottom: 0,
+                        spacingLeft: 0,
                         width: Math.max(1200, window.innerWidth),
                         scrollablePlotArea: {
                             minHeight: plots * 20 + 150,
@@ -468,6 +636,7 @@
                             fontWeight: 400,
                             fontStyle: 'normal',
                         },
+                        styledMode: true,
                         events: {
                             load() {
                                 let chart = this,
