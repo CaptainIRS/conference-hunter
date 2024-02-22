@@ -252,23 +252,17 @@
                         staticScale: 20,
                         grid: {
                             columns: [{
-                                title: {
-                                    text: 'Acronym'
-                                },
                                 overflow: 'allow',
                                 labels: {
                                     formatter: function () {
                                         if (this.value.acronym) {
                                             return this.value.acronym;
                                         } else if (this.value.title) {
-                                            return `<b><a href="https://www.google.com/search?q=${this.value.title}">${this.value.title}</a></b>`;
+                                            return `<b><a target="_blank" href="https://www.google.com/search?q=${this.value.title}">${this.value.title}</a></b>`;
                                         }
                                     }
                                 }
                             }, {
-                                title: {
-                                    text: 'Deadline'
-                                },
                                 labels: {
                                     formatter: function () {
                                         if (this.value.deadline == 'Overall') {
@@ -276,26 +270,6 @@
                                         }
                                         return this.value.deadline;
                                     }
-                                }
-                            }],
-                        },
-                        labels: {
-                            levels: [{
-                                level: 0,
-                                style: {
-                                    fontSize: '1.5em',
-                                    fontWeight: 'bold'
-                                },
-                            }, {
-                                level: 1,
-                                style: {
-                                    fontSize: '1.5em',
-                                    fontWeight: 'bold',
-                                }
-                            }, {
-                                style: {
-                                    fontSize: '1.5em',
-                                    fontWeight: 'bold'
                                 }
                             }],
                         },
