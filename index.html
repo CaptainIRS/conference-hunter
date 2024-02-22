@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conference Deadlines</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script src="https://code.highcharts.com/11.3/highcharts.js"></script>
     <script src="https://code.highcharts.com/gantt/11.3/modules/gantt.js"></script>
@@ -12,6 +17,9 @@
         html {
             overflow: hidden;
             height: 100%;
+            font-family: "Lato", sans-serif !important;
+            font-weight: 400 !important;
+            font-style: normal !important;
         }
 
         body {
@@ -19,11 +27,24 @@
             overflow: auto;
         }
 
+        .tag {
+            font-size: 0.5rem !important;
+        }
+
+        a:hover {
+            color: #485fc7 !important;
+        }
+
         .tabs {
             margin-bottom: -1.2rem !important;
             position: sticky;
-            z-index: 1000;
+            z-index: 1001;
             background-color: white;
+            font-size: 0.75rem !important;
+        }
+
+        .tabs a {
+            border-bottom-width: 2px !important;
         }
 
         footer {
@@ -43,6 +64,7 @@
             height: calc(100% - 3rem);
             width: 100%;
             overflow-x: scroll !important;
+            transition: visibility 0.5s, opacity 0.5s linear;
         }
 
         #container .highcharts-treegrid-node-expanded {
@@ -57,6 +79,26 @@
             fill-opacity: 1 !important;
             fill: #FFFFF0 !important;
         }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20vw;
+        }
+
+        #mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            opacity: 1;
+            transition: visibility 0.5s, opacity 0.5s linear;
+        }
     </style>
 </head>
 
@@ -68,10 +110,23 @@
             <li onclick="openTab('b')" id="b-tab"><a>B Conferences</a></li>
         </ul>
     </div>
+    <div id="mask"><progress id="loading" class="progress is-small is-primary" max="100">0%</progress></div>
     <div id="container"></div>
     <footer>Made with ❤️ by <a href="https://github.com/CaptainIRS">CaptainIRS</a></footer>
     <script>
         let j = 0;
+        const hideMask = () => {
+            document.getElementById('mask').style.visibility = 'hidden';
+            document.getElementById('mask').style.opacity = 0;
+            document.getElementById('container').style.visibility = 'visible';
+            document.getElementById('container').style.opacity = 1;
+        }
+        const showMask = () => {
+            document.getElementById('mask').style.visibility = 'visible';
+            document.getElementById('mask').style.opacity = 1;
+            document.getElementById('container').style.visibility = 'hidden';
+            document.getElementById('container').style.opacity = 0;
+        }
         const appendToSeries = (seriesData, avg, std_dev, min, max, name, parent) => {
             let color = '';
             if (name.includes('Abstract')) {
@@ -140,6 +195,7 @@
         }
 
         const openTab = (confType) => {
+            showMask();
             j = 0;
             document.querySelector('.is-active').classList.remove('is-active');
             document.getElementById(`${confType}-tab`).classList.add('is-active');
@@ -248,14 +304,22 @@
                         });
                     }
                     let k = 0;
-                    let titleStrings = data[i].title.match(/\b[\w\s,-/]{35,}?(?=[\s,-/])|.+$/g);
-                    if (k != newCategories.length) newCategories[k++].title = titleStrings[0];
-                    if (k != newCategories.length && titleStrings.length > 1) newCategories[k++].title = titleStrings[1] + (titleStrings.length > 2 ? '&hellip;' : '');
+                    let titleStrings = data[i].title.match(/\b[\w\s,-/]{35,}?(?=[\s])|.+$/g);
+                    if (k != newCategories.length) {
+                        newCategories[k].title = titleStrings[0];
+                        newCategories[k++].url = `https://www.google.com/search?q=${data[i].title}`;
+                    }
+                    if (k != newCategories.length && titleStrings.length > 1) {
+                        newCategories[k].title = titleStrings[1] + (titleStrings.length > 2 ? '&hellip;' : '');
+                        newCategories[k++].url = `https://www.google.com/search?q=${data[i].title}`;
+                    }
                     if (k != newCategories.length) newCategories[k++].acronym = data[i].acronym;
                     let tags = data[i].tags.join(', ');
-                    let tagStrings = tags.match(/\b[\w\s,]{35,}?(?=[,])|.+$/g);
-                    if (k != newCategories.length) newCategories[k++].tags = tagStrings[0];
-                    if (k != newCategories.length && tagStrings.length > 1) newCategories[k++].tags = tagStrings[1].substring(2) + (tagStrings.length > 2 ? '&hellip;' : '');
+                    if (tags) {
+                        let tagStrings = tags.match(/\b[\w\s,-/]{35,}?(?=[,])|.+$/g);
+                        if (k != newCategories.length) newCategories[k++].tags = '<span class="tag">' + tagStrings[0].split(', ').join('</span> <span class="tag">') + '</span>';
+                        if (k != newCategories.length && tagStrings.length > 1) newCategories[k++].tags = '<span class="tag">' + (tagStrings[1].substring(2)).split(', ').join('</span> <span class="tag">') + '</span>' + (tagStrings.length > 2 ? '&nbsp;&hellip;' : '');
+                    }
                     categories.push(...newCategories);
                 }
 
@@ -270,11 +334,13 @@
                                         if (this.value.acronym) {
                                             return this.value.acronym;
                                         } else if (this.value.title) {
-                                            return `<b><a target="_blank" href="https://www.google.com/search?q=${this.value.title}">${this.value.title}</a></b>`;
+                                            console.log(this.value.url);
+                                            return `<b><a target="_blank" href="${this.value.url}">${this.value.title}</a></b>`;
                                         } else if (this.value.tags) {
                                             return this.value.tags;
                                         }
-                                    }
+                                    },
+                                    useHTML: true,
                                 }
                             }, {
                                 labels: {
@@ -306,6 +372,11 @@
                         scrollablePlotArea: {
                             minHeight: plots * 20 + 150,
                         },
+                        style: {
+                            fontFamily: 'Lato',
+                            fontWeight: 400,
+                            fontStyle: 'normal',
+                        },
                         events: {
                             load() {
                                 let chart = this,
@@ -315,6 +386,7 @@
                                         ticks[i].mark.hide();
                                     }
                                 }
+                                setTimeout(hideMask, 1000);
                             }
                         }
                     }
