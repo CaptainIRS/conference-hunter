@@ -22,7 +22,7 @@
 
         body {
             height: 100%;
-            overflow: auto;
+            overflow: hidden;
             font-family: "Lato", sans-serif !important;
             font-weight: 400 !important;
             font-style: normal !important;
@@ -70,6 +70,12 @@
         }
 
         #info-container {
+            position: absolute;
+            top: 1.5rem;
+            height: calc(100dvh - 3rem);
+            height: calc(100% - 3rem);
+            width: 100%;
+            overflow-y: auto;
             transition: visibility 0.5s, opacity 0.5s linear;
         }
 
@@ -242,6 +248,7 @@
             document.getElementById('info-container').style.opacity = 1;
             document.querySelector('.is-active').classList.remove('is-active');
             document.getElementById('info-tab').classList.add('is-active');
+            window.history.pushState({}, '', '/');
         }
 
         const openTab = (confType) => {
