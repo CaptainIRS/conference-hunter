@@ -157,10 +157,6 @@
                         continue;
                     }
                     let deadlines = [];
-                    let content = [
-                        data[i].title,
-                        data[i].acronym,
-                    ];
                     let addedPlots = 0;
                     let hasSeries = false;
                     let minDate = null, maxDate = null;
@@ -245,18 +241,23 @@
 
                     plots += addedPlots;
 
+                    let newCategories = [];
                     for (let k = 0; k < deadlines.length; k++) {
-                        categories.push({
+                        newCategories.push({
                             deadline: deadlines[k],
                         });
-                        if (k == 0)
-                            categories[categories.length - 1].title = content[k];
-                        if (k == 1)
-                            categories[categories.length - 1].acronym = content[k];
                     }
-
+                    let k = 0;
+                    let titleStrings = data[i].title.match(/\b[\w\s,-/]{35,}?(?=[\s,-/])|.+$/g);
+                    if (k != newCategories.length) newCategories[k++].title = titleStrings[0];
+                    if (k != newCategories.length && titleStrings.length > 1) newCategories[k++].title = titleStrings[1] + (titleStrings.length > 2 ? '&hellip;' : '');
+                    if (k != newCategories.length) newCategories[k++].acronym = data[i].acronym;
+                    let tags = data[i].tags.join(', ');
+                    let tagStrings = tags.match(/\b[\w\s,]{35,}?(?=[,])|.+$/g);
+                    if (k != newCategories.length) newCategories[k++].tags = tagStrings[0];
+                    if (k != newCategories.length && tagStrings.length > 1) newCategories[k++].tags = tagStrings[1].substring(2) + (tagStrings.length > 2 ? '&hellip;' : '');
+                    categories.push(...newCategories);
                 }
-                console.log(categories);
 
                 const chart = Highcharts.ganttChart('container', {
                     yAxis: {
@@ -270,6 +271,8 @@
                                             return this.value.acronym;
                                         } else if (this.value.title) {
                                             return `<b><a target="_blank" href="https://www.google.com/search?q=${this.value.title}">${this.value.title}</a></b>`;
+                                        } else if (this.value.tags) {
+                                            return this.value.tags;
                                         }
                                     }
                                 }
@@ -302,6 +305,17 @@
                         width: Math.max(1200, window.innerWidth),
                         scrollablePlotArea: {
                             minHeight: plots * 20 + 150,
+                        },
+                        events: {
+                            load() {
+                                let chart = this,
+                                    ticks = chart.yAxis[0].brokenAxis.axis.ticks;
+                                for (let i = 0; i < categories.length - 1; i++) {
+                                    if (categories[i + 1].deadline != 'Overall') {
+                                        ticks[i].mark.hide();
+                                    }
+                                }
+                            }
                         }
                     }
                 });
