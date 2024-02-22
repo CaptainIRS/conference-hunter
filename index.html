@@ -5,8 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conference Deadlines</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <meta name="description" content="A tool to visualize the deadlines of top-rated CS conferences.">
+    <meta name="keywords" content="conference, deadlines, visualization, computer science, CS, CORE2023, WikiCFP">
+    <meta name="author" content="CaptainIRS">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Conference Hunter">
+    <meta property="og:description" content="A tool to visualize the deadlines of top-rated CS conferences.">
+    <meta property="og:image" content="https://conference-hunter.captainirs.dev/icon.svg">
+    <meta property="og:url" content="https://conference-hunter.captainirs.dev/">
+    <meta property="og:type" content="website">
+
     <link
         href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
         rel="stylesheet">
@@ -135,6 +147,28 @@
                 </p>
             </div>
         </section>
+        <section class="section">
+            <h2 class="title">About</h1>
+                <p>
+                    <!-- CORE2023 conferences, WikiCFP deadlines from 2018-23 -->
+                    This site visualizes the usual range of deadlines for top-rated computer science conferences. The
+                    conference
+                    rankings are based on the CORE2023 ranking. The deadline data is from WikiCFP. The data is from
+                    2018-2023.
+                </p>
+        </section>
+        <section class="section">
+            <h2 class="title">How to use</h1>
+                <p>
+                    Click on the tabs to view the deadlines for different conference rankings. The deadlines are
+                    color-coded
+                    based on the type of deadline. The black bars represent the overall duration of the conference. The
+                    grey
+                    bars represent the average deadline with a 2 standard deviation range. The colored bars represent
+                    the
+                    actual deadline range (the minimum and maximum dates in the dataset).
+                </p>
+        </section>
         <section class="hero is-small is-warning">
             <div class="hero-body">
                 <p class="subtitle">
@@ -146,23 +180,6 @@
                     accurate information.
                 </p>
             </div>
-        </section>
-        <section class="section">
-            <h2 class="title">About</h1>
-            <p>
-                <!-- CORE2023 conferences, WikiCFP deadlines from 2018-23 -->
-                This site visualizes the usual range of deadlines for top-rated computer science conferences. The conference
-                rankings are based on the CORE2023 ranking. The deadline data is from WikiCFP. The data is from 2018-2023.
-            </p>
-            </section>
-        <section class="section">
-            <h2 class="title">How to use</h1>
-            <p>
-                Click on the tabs to view the deadlines for different conference rankings. The deadlines are color-coded
-                based on the type of deadline. The black bars represent the overall duration of the conference. The grey
-                bars represent the average deadline with a 2 standard deviation range. The colored bars represent the
-                actual deadline range (the minimum and maximum dates in the dataset).
-            </p>
         </section>
     </div>
     <div id="container"></div>
