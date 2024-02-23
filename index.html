@@ -212,6 +212,11 @@
 
         .dark .tabs a {
             color: white;
+            border-bottom-color: rgb(168, 168, 168);
+        }
+
+        .dark .tabs ul {
+            border-bottom-color: rgb(88, 88, 88);
         }
 
         .dark .tabs li.is-active a {
@@ -649,7 +654,10 @@
                                 setTimeout(hideMask, 1000);
                             }
                         }
-                    }
+                    },
+                    tooltip: {
+                        enabled: false,
+                    },
                 });
             });
         }
