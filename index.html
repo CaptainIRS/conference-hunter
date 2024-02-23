@@ -28,8 +28,6 @@
     <script src="https://code.highcharts.com/gantt/11.3/modules/gantt.js"></script>
     <link rel="stylesheet" href="https://code.highcharts.com/11.3/css/highcharts.css">
     <style>
-        :root {}
-
         :root .highcharts-light {
             --highcharts-color-10: #000;
             --highcharts-color-11: rgba(148, 0, 211, 0.8);
@@ -562,7 +560,7 @@
                         });
                     }
                     let k = 0;
-                    let titleStrings = data[i].title.match(/\b[\w\s,-/]{35,}?(?=[\s])|.+$/g);
+                    let titleStrings = data[i].title.match(/\b[\w\s,&\(\)-/]{35,}?(?=[\s])|.+$/g);
                     if (k != newCategories.length) {
                         newCategories[k].title = titleStrings[0];
                         newCategories[k++].url = `https://www.google.com/search?q=${data[i].title}`;
@@ -574,7 +572,7 @@
                     if (k != newCategories.length) newCategories[k++].acronym = data[i].acronym;
                     let tags = data[i].tags.join(', ');
                     if (tags) {
-                        let tagStrings = tags.match(/\b[\w\s,-/]{35,}?(?=[,])|.+$/g);
+                        let tagStrings = tags.match(/\b[\w\s,&-/]{35,}?(?=[,])|.+$/g);
                         if (k != newCategories.length) newCategories[k++].tags = '<span class="tag">' + tagStrings[0].split(', ').join('</span> <span class="tag">') + '</span>';
                         if (k != newCategories.length && tagStrings.length > 1) newCategories[k++].tags = '<span class="tag">' + (tagStrings[1].substring(2)).split(', ').join('</span> <span class="tag">') + '</span>' + (tagStrings.length > 2 ? '&nbsp;&hellip;' : '');
                     }
