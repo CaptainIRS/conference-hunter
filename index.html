@@ -50,6 +50,10 @@
             --highcharts-color-17: rgba(255, 255, 255, 0.3);
         }
 
+        * {
+            transition: background-color 1s;
+        }
+
         .highcharts-color-10 {
             fill: var(--highcharts-color-10);
             stroke: var(--highcharts-color-10);
@@ -151,8 +155,8 @@
         #container {
             position: absolute;
             top: 2rem;
-            height: 100dvh;
-            height: 100%;
+            height: calc(100dvh - 2rem - 1.25rem);
+            height: calc(100% - 2rem - 1.25rem);
             width: 100%;
             overflow-x: scroll !important;
             transition: visibility 0.5s, opacity 0.5s linear;
@@ -188,6 +192,14 @@
         .highcharts-dark .highcharts-scrollable-mask {
             fill-opacity: 1 !important;
             fill: rgb(68, 68, 68) !important;
+        }
+
+        .highcharts-scrollable-mask, .highcharts-background {
+            transition: fill 1s;
+        }
+
+        .highcharts-tick, .highcharts-grid-line, .highcharts-axis-line {
+            transition: stroke 1s;
         }
 
         #loading {
@@ -226,8 +238,16 @@
             border-bottom-color: rgb(168, 168, 168);
         }
 
+        .tabs a {
+            transition: border-bottom-color 1s;
+        }
+
         .dark .tabs ul {
             border-bottom-color: rgb(88, 88, 88);
+        }
+
+        .tabs ul {
+            transition: border-bottom-color 1s;
         }
 
         .dark .tabs li.is-active a {
@@ -235,8 +255,16 @@
             border-bottom-color: hsl(219, 89%, 78%) !important;
         }
 
+        .tabs li.is-active a {
+            transition: color 0.5s, border-bottom-color 0.5s;
+        }
+
         .dark a {
             color: hsl(219, 70%, 96%);
+        }
+
+        a {
+            transition: color 0.5s;
         }
 
         .dark a:hover {
