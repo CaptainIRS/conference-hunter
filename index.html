@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conference Hunter | Deadlines of Top CS Conferences</title>
-    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -490,18 +490,19 @@
             document.getElementById('info-container').style.opacity = 1;
             document.querySelector('.is-active').classList.remove('is-active');
             document.getElementById('info-tab').classList.add('is-active');
-            window.history.pushState({}, '', '/');
+            window.history.pushState({}, '', `./`);
         }
 
         const openTab = (confType) => {
             window.history.pushState({}, '', `?confType=${confType}`);
+
             showMask();
             j = 0;
             document.querySelector('.is-active').classList.remove('is-active');
             document.getElementById(`${confType}-tab`).classList.add('is-active');
             document.getElementById('info-container').style.visibility = 'hidden';
             document.getElementById('info-container').style.opacity = 0;
-            fetch('/details.json').then(response => response.json()).then(data => {
+            fetch('./details.json').then(response => response.json()).then(data => {
                 let seriesData = {
                     'name': 'Deadlines',
                     'data': [],
